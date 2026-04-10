@@ -26,7 +26,7 @@ export function LoginPageClient() {
 
   const handleLogin = () => {
     const result = validateLogin(role, email, password);
-    if (!result.ok) {
+    if (!result.ok || !result.account) {
       setMessage(result.message);
       return;
     }
