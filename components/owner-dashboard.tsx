@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getCurrentAccount } from "@/lib/auth";
 import { laundries, seededOrders } from "@/lib/data";
 import { buildInsight } from "@/lib/ml";
 
@@ -11,12 +12,35 @@ export function OwnerDashboard() {
   const [latitude, setLatitude] = useState("30.7417");
   const [longitude, setLongitude] = useState("76.7683");
   const [statusMessage, setStatusMessage] = useState("Your batch is in steam press and will be dispatched soon.");
+  const [ownerAccount, setOwnerAccount] = useState<{
+    name: string;
+    email: string;
+    laundryName: string;
+    address: string;
+  }>({
+    name: "Meera Nair",
+    email: "owner@freshloop.in",
+    laundryName: "FreshLoop Laundry",
+    address: "Hostel Square, Sector 14, Chandigarh"
+  });
 
   const laundry = useMemo(
     () => laundries.find((entry) => entry.id === selectedLaundryId) ?? laundries[1],
     [selectedLaundryId]
   );
   const insight = buildInsight(selectedLaundryId, { liveQueueLoad: queueLoad });
+
+  useEffect(() => {
+    const currentAccount = getCurrentAccount();
+    if (currentAccount?.role === "owner") {
+      setOwnerAccount({
+        name: currentAccount.name,
+        email: currentAccount.email,
+        laundryName: currentAccount.laundryName,
+        address: currentAccount.address
+      });
+    }
+  }, []);
 
   return (
     <div className="page-shell">
@@ -48,19 +72,19 @@ export function OwnerDashboard() {
           <div className="profile-grid">
             <div className="span-12 profile-row">
               <span>Owner</span>
-              <strong>Meera Nair</strong>
+              <strong>{ownerAccount.name}</strong>
             </div>
             <div className="span-12 profile-row">
               <span>Laundry</span>
-              <strong>{laundry.name}</strong>
+              <strong>{ownerAccount.laundryName}</strong>
             </div>
             <div className="span-12 profile-row">
               <span>Email</span>
-              <strong>owner@freshloop.in</strong>
+              <strong>{ownerAccount.email}</strong>
             </div>
             <div className="span-12 profile-row">
               <span>Address</span>
-              <strong>{laundry.address}</strong>
+              <strong>{ownerAccount.address}</strong>
             </div>
           </div>
         </div>

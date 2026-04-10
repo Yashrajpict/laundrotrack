@@ -23,6 +23,7 @@ type OwnerAccount = {
 export type StoredAccount = StudentAccount | OwnerAccount;
 
 const storageKey = "laundrotrack.accounts";
+const sessionKey = "laundrotrack.currentAccount";
 
 function getDemoAccounts(): StoredAccount[] {
   return [
@@ -96,4 +97,29 @@ export function validateLogin(role: UserRole, email: string, password: string) {
   }
 
   return { ok: true, message: "Login successful.", account };
+}
+
+export function setCurrentAccount(account: StoredAccount) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.setItem(sessionKey, JSON.stringify(account));
+}
+
+export function getCurrentAccount() {
+  if (typeof window === "undefined") {
+    return undefined;
+  }
+
+  const raw = window.localStorage.getItem(sessionKey);
+  if (!raw) {
+    return undefined;
+  }
+
+  try {
+    return JSON.parse(raw) as StoredAccount;
+  } catch {
+    return undefined;
+  }
 }

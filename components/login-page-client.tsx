@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { validateLogin } from "@/lib/auth";
+import { setCurrentAccount, validateLogin } from "@/lib/auth";
 import { demoAccounts } from "@/lib/data";
 
 export function LoginPageClient() {
@@ -32,6 +32,7 @@ export function LoginPageClient() {
     }
 
     setMessage(result.message);
+    setCurrentAccount(result.account);
     router.push(role === "student" ? "/student" : "/owner");
   };
 

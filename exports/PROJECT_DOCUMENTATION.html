@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>LaundroTrack Project Documentation</title>
+  <style>
+    body { font-family: Georgia, serif; margin: 40px; line-height: 1.5; color: #222; }
+    h1, h2, h3 { color: #0f766e; }
+    h1 { font-size: 28px; margin-bottom: 12px; }
+    h2 { font-size: 22px; margin-top: 28px; }
+    h3 { font-size: 18px; margin-top: 22px; }
+    p, li { font-size: 12pt; }
+    ul { margin-left: 20px; }
+    pre { background: #f4f4f4; padding: 12px; border-radius: 8px; white-space: pre-wrap; }
+    code { font-family: Menlo, monospace; }
+    hr { margin: 24px 0; }
+  </style>
+</head>
+<body>
+<h1>LaundroTrack Project Documentation</h1>
+<h2>1. Project Overview</h2>
+<p>LaundroTrack is a full-stack AI/ML-enabled laundry service application designed for college students, hostelites, and laundry owners. The platform helps student users discover nearby laundries, compare wait times, place clothing-based laundry orders, and monitor live order updates. Laundry owners get a separate dashboard to manage their laundry profile, queue pressure, map positioning, and customer notifications.</p>
+<p>The application has been built as a modern Next.js App Router project and includes:</p>
+<ul>
+<li>Role-based login and signup for students and laundry owners</li>
+<li>Google Maps integration for nearby laundry discovery</li>
+<li>Google Places integration to show laundries near the user’s real location</li>
+<li>Machine learning style demand prediction and rush-hour analysis</li>
+<li>A dedicated orders and tracking tab</li>
+<li>Closed-laundry queueing so students can queue requests for the owner to review later</li>
+<li>Demo API routes and seeded application data for local development</li>
+</ul>
+<p>This project currently works as an MVP-style prototype with demo data and browser-side persistence for auth.</p>
+<p>---</p>
+<h2>2. Core Objective</h2>
+<p>The main purpose of LaundroTrack is to solve a common student problem: it is difficult to know which laundry is nearby, which one is crowded, how long delivery may take, and what is happening after the clothes are handed over.</p>
+<p>LaundroTrack addresses this by combining:</p>
+<ul>
+<li>Location-based discovery using Google Maps and Places</li>
+<li>Predictive analytics to estimate rush hours and turnaround times</li>
+<li>Live status updates inspired by food-delivery apps like Swiggy or Zomato</li>
+<li>Role-based workflows for both the customer and the laundry owner</li>
+</ul>
+<p>---</p>
+<h2>3. Technology Stack</h2>
+<h3>Frontend</h3>
+<ul>
+<li>Next.js 15</li>
+<li>React 19</li>
+<li>TypeScript</li>
+<li>App Router architecture</li>
+<li>Custom CSS in [`app/globals.css`](/Users/yashraj/Desktop/LaundroTrack/app/globals.css)</li>
+</ul>
+<h3>Backend / Full-Stack Layer</h3>
+<ul>
+<li>Next.js API routes</li>
+<li>Shared TypeScript domain models</li>
+<li>Seeded in-memory data for laundries, orders, and ML inputs</li>
+</ul>
+<h3>Maps / Location</h3>
+<ul>
+<li>Google Maps JavaScript API</li>
+<li>Google Places API</li>
+<li>Browser Geolocation API</li>
+</ul>
+<h3>AI / ML Logic</h3>
+<ul>
+<li>Exponentially weighted moving average based forecasting</li>
+<li>Queue-pressure and capacity blending for turnaround prediction</li>
+<li>Recommendation logic for busiest day, calmest day, and best pickup window</li>
+</ul>
+<h3>Local Persistence</h3>
+<ul>
+<li>`localStorage` for signed-up student and owner accounts</li>
+</ul>
+<p>---</p>
+<h2>4. Functional Modules</h2>
+<h3>4.1 Landing Page</h3>
+<p>The home page introduces the app and routes users into the student dashboard, owner console, and orders tab.</p>
+<p>Relevant file:</p>
+<ul>
+<li>[`app/page.tsx`](/Users/yashraj/Desktop/LaundroTrack/app/page.tsx)</li>
+</ul>
+<h3>4.2 Authentication</h3>
+<p>The app supports separate signup and login flows for:</p>
+<ul>
+<li>Student users</li>
+<li>Laundry owners</li>
+</ul>
+<p>Relevant files:</p>
+<ul>
+<li>[`app/auth/login/page.tsx`](/Users/yashraj/Desktop/LaundroTrack/app/auth/login/page.tsx)</li>
+<li>[`components/login-page-client.tsx`](/Users/yashraj/Desktop/LaundroTrack/components/login-page-client.tsx)</li>
+<li>[`app/auth/signup/page.tsx`](/Users/yashraj/Desktop/LaundroTrack/app/auth/signup/page.tsx)</li>
+<li>[`lib/auth.ts`](/Users/yashraj/Desktop/LaundroTrack/lib/auth.ts)</li>
+</ul>
+<p>How it works:</p>
+<ul>
+<li>Demo accounts are always available from seeded data.</li>
+<li>Newly registered users are stored in browser `localStorage`.</li>
+<li>Login validation checks the chosen role, email, and password.</li>
+<li>Role separation is maintained so a student cannot log in through the owner role and vice versa.</li>
+</ul>
+<h3>4.3 Student Dashboard</h3>
+<p>The student dashboard is the discovery and analytics center for student users.</p>
+<p>Relevant file:</p>
+<ul>
+<li>[`components/student-dashboard.tsx`](/Users/yashraj/Desktop/LaundroTrack/components/student-dashboard.tsx)</li>
+</ul>
+<p>What it provides:</p>
+<ul>
+<li>Student profile section</li>
+<li>Nearby laundry discovery through map and list</li>
+<li>Clickable map interactions</li>
+<li>Laundry details panel</li>
+<li>Pricing menu in INR</li>
+<li>AI/ML recommendation cards</li>
+<li>A button to select the current laundry for ordering</li>
+</ul>
+<h3>4.4 Orders + Tracking Tab</h3>
+<p>Ordering and live tracking were separated into their own dedicated page for clarity.</p>
+<p>Relevant files:</p>
+<ul>
+<li>[`app/orders/page.tsx`](/Users/yashraj/Desktop/LaundroTrack/app/orders/page.tsx)</li>
+<li>[`components/orders-tracking-page.tsx`](/Users/yashraj/Desktop/LaundroTrack/components/orders-tracking-page.tsx)</li>
+<li>[`components/order-form.tsx`](/Users/yashraj/Desktop/LaundroTrack/components/order-form.tsx)</li>
+</ul>
+<p>This page includes:</p>
+<ul>
+<li>Laundry selection dropdown</li>
+<li>Order placement form</li>
+<li>Per-clothing unit pricing in rupees</li>
+<li>Delivery time estimate</li>
+<li>Queue request mode when a laundry is closed</li>
+<li>Tracking summary</li>
+<li>Live order timeline</li>
+</ul>
+<h3>4.5 Laundry Owner Dashboard</h3>
+<p>Owners use a different dashboard from students.</p>
+<p>Relevant file:</p>
+<ul>
+<li>[`components/owner-dashboard.tsx`](/Users/yashraj/Desktop/LaundroTrack/components/owner-dashboard.tsx)</li>
+</ul>
+<p>What it includes:</p>
+<ul>
+<li>Owner profile section</li>
+<li>Laundry selection</li>
+<li>Queue load updates</li>
+<li>Position note and coordinate fields</li>
+<li>Message box for sending status updates</li>
+<li>ML recommendation cards to help operational decisions</li>
+</ul>
+<h3>4.6 Maps and Nearby Discovery</h3>
+<p>Map and nearby-discovery functionality is handled by the Google Maps component.</p>
+<p>Relevant file:</p>
+<ul>
+<li>[`components/google-map.tsx`](/Users/yashraj/Desktop/LaundroTrack/components/google-map.tsx)</li>
+</ul>
+<p>Current behavior:</p>
+<ul>
+<li>Requests location access from the browser</li>
+<li>Includes a `Use My Location` button</li>
+<li>Loads the Google Maps JavaScript API</li>
+<li>Loads the Places library</li>
+<li>Searches for nearby laundries around the user’s current coordinates</li>
+<li>Creates map pins for nearby Places results</li>
+<li>Shows laundry names and addresses in info popups</li>
+<li>Lists nearby laundries below the map</li>
+<li>Falls back to seeded laundries if nearby Places data is unavailable</li>
+</ul>
+<p>---</p>
+<h2>5. User Roles</h2>
+<h3>Student Role</h3>
+<p>Student capabilities:</p>
+<ul>
+<li>Sign up as a student</li>
+<li>Log in as a student</li>
+<li>See nearby laundries</li>
+<li>Click laundries on the map</li>
+<li>View laundry details</li>
+<li>Compare estimated turnaround</li>
+<li>Choose a laundry for orders</li>
+<li>Place an order if the laundry is open</li>
+<li>Queue an order if the laundry is closed</li>
+<li>View live order tracking</li>
+</ul>
+<h3>Laundry Owner Role</h3>
+<p>Owner capabilities:</p>
+<ul>
+<li>Sign up as an owner</li>
+<li>Log in as an owner</li>
+<li>Manage laundry profile details</li>
+<li>Update queue load</li>
+<li>Update location notes</li>
+<li>Update coordinates</li>
+<li>Send status messages to users</li>
+<li>Review system recommendations about rush periods</li>
+</ul>
+<p>---</p>
+<h2>6. AI / ML Features</h2>
+<p>LaundroTrack includes a practical ML-inspired module rather than a placeholder banner.</p>
+<p>Relevant file:</p>
+<ul>
+<li>[`lib/ml.ts`](/Users/yashraj/Desktop/LaundroTrack/lib/ml.ts)</li>
+</ul>
+<h3>6.1 Forecasting Method</h3>
+<p>The system uses an interpretable baseline model:</p>
+<ul>
+<li>Historical weekly demand is stored for each laundry</li>
+<li>Exponential smoothing is used to estimate trend strength</li>
+<li>Queue load is blended with historical demand</li>
+<li>Capacity per hour is used to estimate the strain on turnaround time</li>
+</ul>
+<p>This produces:</p>
+<ul>
+<li>Predicted daily order volume</li>
+<li>Estimated turnaround time per day</li>
+<li>The busiest day of the week</li>
+<li>The calmest day of the week</li>
+<li>A recommended best pickup window</li>
+</ul>
+<h3>6.2 Why This Counts as ML Logic</h3>
+<p>While this is not yet a production-grade deep-learning pipeline, it is still predictive modeling based on historical patterns and operational variables. It is suitable for a strong MVP and easy to explain in project presentations.</p>
+<h3>6.3 Production Upgrade Options</h3>
+<p>Future upgrades can include:</p>
+<ul>
+<li>XGBoost for delivery-time prediction</li>
+<li>Prophet for weekly demand forecasting</li>
+<li>LSTM/GRU for sequence-based laundry demand prediction</li>
+<li>Real-time owner-updated queue ingestion</li>
+<li>Personalized ranking by user preferences and distance</li>
+</ul>
+<p>---</p>
+<h2>7. Data Model</h2>
+<p>Relevant files:</p>
+<ul>
+<li>[`lib/types.ts`](/Users/yashraj/Desktop/LaundroTrack/lib/types.ts)</li>
+<li>[`lib/data.ts`](/Users/yashraj/Desktop/LaundroTrack/lib/data.ts)</li>
+</ul>
+<h3>7.1 Laundry</h3>
+<p>Each laundry includes:</p>
+<ul>
+<li>ID</li>
+<li>Name</li>
+<li>Address</li>
+<li>Owner name</li>
+<li>Latitude and longitude</li>
+<li>Distance</li>
+<li>Rating</li>
+<li>ETA</li>
+<li>Position note</li>
+<li>Service pricing</li>
+<li>Weekly demand history</li>
+<li>Capacity per hour</li>
+<li>Live queue load</li>
+<li>Open/closed state</li>
+<li>Queue-enabled flag</li>
+<li>Operating hours text</li>
+</ul>
+<h3>7.2 Order</h3>
+<p>Each order includes:</p>
+<ul>
+<li>Order ID</li>
+<li>Laundry ID</li>
+<li>Customer name</li>
+<li>Hostel</li>
+<li>Pickup slot</li>
+<li>Item list</li>
+<li>Total amount</li>
+<li>Predicted turnaround hours</li>
+<li>Ordered status steps</li>
+</ul>
+<h3>7.3 Auth Account</h3>
+<p>Accounts are split into:</p>
+<ul>
+<li>Student accounts with hostel information</li>
+<li>Owner accounts with laundry name and address</li>
+</ul>
+<p>---</p>
+<h2>8. Ordering Logic</h2>
+<p>Relevant file:</p>
+<ul>
+<li>[`components/order-form.tsx`](/Users/yashraj/Desktop/LaundroTrack/components/order-form.tsx)</li>
+</ul>
+<p>The form behaves as follows:</p>
+<p>1. User selects a laundry. 2. Clothing items are chosen with quantities. 3. The total is calculated in INR. 4. Delivery time is estimated using order quantity and queue load. 5. If the laundry is open:    - the order is placed immediately 6. If the laundry is closed but queueing is enabled:    - the order is queued for the owner 7. A user message confirms the action taken</p>
+<p>This logic supports the exact workflow you requested:</p>
+<ul>
+<li>direct ordering for open laundries</li>
+<li>queueing for closed laundries</li>
+</ul>
+<p>---</p>
+<h2>9. Map Interaction Flow</h2>
+<p>The intended map-related user journey is:</p>
+<p>1. Student opens the dashboard 2. Browser requests geolocation permission 3. Google Maps centers around the current location 4. Google Places searches for nearby laundries 5. Nearby laundries are shown as numbered pins 6. The same laundries are listed below the map 7. User views details and chooses a laundry 8. User proceeds to the Orders + Tracking tab</p>
+<p>If live Places results are unavailable, the application falls back to seeded laundries so the UI remains functional.</p>
+<p>---</p>
+<h2>10. API Routes</h2>
+<p>Relevant files:</p>
+<ul>
+<li>[`app/api/laundries/route.ts`](/Users/yashraj/Desktop/LaundroTrack/app/api/laundries/route.ts)</li>
+<li>[`app/api/orders/route.ts`](/Users/yashraj/Desktop/LaundroTrack/app/api/orders/route.ts)</li>
+<li>[`app/api/insights/route.ts`](/Users/yashraj/Desktop/LaundroTrack/app/api/insights/route.ts)</li>
+</ul>
+<h3>10.1 `GET /api/laundries`</h3>
+<p>Returns seeded laundries.</p>
+<h3>10.2 `GET /api/orders`</h3>
+<p>Returns seeded orders.</p>
+<h3>10.3 `POST /api/orders`</h3>
+<p>Accepts an order payload and returns a demo acceptance response.</p>
+<h3>10.4 `GET /api/insights`</h3>
+<p>Returns all generated ML insight objects.</p>
+<p>These routes currently act as MVP stubs and are ready to be replaced with real persistence later.</p>
+<p>---</p>
+<h2>11. Authentication Design</h2>
+<p>Auth in this project is intentionally lightweight for MVP/prototype development.</p>
+<p>Current implementation:</p>
+<ul>
+<li>Demo accounts from seeded data</li>
+<li>New signup stored in browser `localStorage`</li>
+<li>Role-specific login validation</li>
+</ul>
+<p>This is enough for:</p>
+<ul>
+<li>demonstration</li>
+<li>college project presentations</li>
+<li>UI/UX validation</li>
+<li>prototype testing</li>
+</ul>
+<p>For production, this should be replaced with:</p>
+<ul>
+<li>a real database</li>
+<li>hashed passwords</li>
+<li>secure sessions or JWTs</li>
+<li>backend validation</li>
+<li>role-based authorization</li>
+</ul>
+<p>---</p>
+<h2>12. File Structure</h2>
+<p>High-level project structure:</p>
+<pre><code>LaundroTrack/
+├── app/
+│   ├── api/
+│   ├── auth/
+│   ├── orders/
+│   ├── owner/
+│   ├── student/
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── google-map.tsx
+│   ├── login-page-client.tsx
+│   ├── order-form.tsx
+│   ├── orders-tracking-page.tsx
+│   ├── owner-dashboard.tsx
+│   └── student-dashboard.tsx
+├── lib/
+│   ├── auth.ts
+│   ├── data.ts
+│   ├── ml.ts
+│   ├── types.ts
+│   └── utils.ts
+├── .env.example
+├── .env.local
+├── package.json
+├── README.md
+└── PROJECT_DOCUMENTATION.md
+</code></pre>
+<p>---</p>
+<h2>13. Environment Configuration</h2>
+<p>Relevant files:</p>
+<ul>
+<li>[`.env.example`](/Users/yashraj/Desktop/LaundroTrack/.env.example)</li>
+<li>[`.env.local`](/Users/yashraj/Desktop/LaundroTrack/.env.local)</li>
+</ul>
+<p>Current environment values used by the app:</p>
+<ul>
+<li>`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`</li>
+<li>`NEXT_PUBLIC_GOOGLE_PLACES_API_KEY`</li>
+</ul>
+<p>Important note:</p>
+<p>These are public client-side keys because they are used in browser-loaded Google scripts. In production, they must be restricted in Google Cloud using:</p>
+<ul>
+<li>HTTP referrer restrictions</li>
+<li>API restrictions</li>
+<li>domain-specific allowlists</li>
+</ul>
+<p>---</p>
+<h2>14. How to Run the Project</h2>
+<h3>Prerequisites</h3>
+<ul>
+<li>Node.js 20+</li>
+<li>npm</li>
+</ul>
+<h3>Steps</h3>
+<p>1. Install dependencies</p>
+<pre><code>npm install
+</code></pre>
+<p>2. Ensure `.env.local` contains the Google API keys</p>
+<p>3. Start the development server</p>
+<pre><code>npm run dev
+</code></pre>
+<p>4. Open the local app in the browser</p>
+<pre><code>http://localhost:3000
+</code></pre>
+<p>5. Allow location access when prompted</p>
+<h3>Build Validation</h3>
+<p>The project has been build-verified successfully with:</p>
+<pre><code>npm run build
+</code></pre>
+<p>---</p>
+<h2>15. Demo Credentials</h2>
+<p>Student demo account:</p>
+<ul>
+<li>Email: `student@laundrotrack.in`</li>
+<li>Password: `student123`</li>
+</ul>
+<p>Owner demo account:</p>
+<ul>
+<li>Email: `owner@freshloop.in`</li>
+<li>Password: `owner123`</li>
+</ul>
+<p>New accounts can also be created through the signup page.</p>
+<p>---</p>
+<h2>16. UI / UX Design Direction</h2>
+<p>The UI uses a custom warm-toned visual system rather than a generic dashboard template.</p>
+<p>Design characteristics:</p>
+<ul>
+<li>Soft cream background with gradient overlays</li>
+<li>Rounded cards and panels</li>
+<li>Serif-led typography for a more distinct visual tone</li>
+<li>Clear separation between discovery, insights, ordering, and owner actions</li>
+<li>Mobile-responsive grid layout</li>
+</ul>
+<p>Relevant file:</p>
+<ul>
+<li>[`app/globals.css`](/Users/yashraj/Desktop/LaundroTrack/app/globals.css)</li>
+</ul>
+<p>---</p>
+<h2>17. Current Limitations</h2>
+<p>This is a strong MVP, but a few areas are still prototype-level:</p>
+<ul>
+<li>Signup and login use browser storage instead of a real backend</li>
+<li>Orders are not persisted in a real database</li>
+<li>Live tracking is currently demo-seeded rather than real-time websocket driven</li>
+<li>Owner updates do not yet persist across sessions</li>
+<li>Google Places results do not yet map one-to-one into full internal laundry profiles with custom pricing</li>
+</ul>
+<p>---</p>
+<h2>18. Recommended Next Steps</h2>
+<p>If you want to turn this into a stronger product or final-year project, the next recommended upgrades are:</p>
+<ul>
+<li>Add PostgreSQL or MongoDB for real persistence</li>
+<li>Add NextAuth or custom auth with password hashing</li>
+<li>Add WebSockets or Firebase for real-time status notifications</li>
+<li>Store owner-managed laundries in the database</li>
+<li>Convert live nearby Places results into user-selectable orderable laundries</li>
+<li>Add payment integration</li>
+<li>Add order history</li>
+<li>Add rating and review system</li>
+<li>Add push notifications</li>
+<li>Add admin analytics dashboard</li>
+</ul>
+<p>---</p>
+<h2>19. Best Presentation Summary</h2>
+<p>If you need a short presentation-ready explanation:</p>
+<p>LaundroTrack is an AI/ML-powered laundry service platform for students and hostel residents. It helps users find nearby laundries on Google Maps, predicts rush hours using historical demand and queue analysis, enables clothing-based order placement in rupees, and provides live order status updates similar to food-delivery apps. It also offers a dedicated owner portal where laundry operators can manage queue pressure, location, and customer updates.</p>
+<p>---</p>
+<h2>20. Important Project Files</h2>
+<p>For fast navigation, these are the most important files in the codebase:</p>
+<ul>
+<li>[`app/page.tsx`](/Users/yashraj/Desktop/LaundroTrack/app/page.tsx)</li>
+<li>[`components/student-dashboard.tsx`](/Users/yashraj/Desktop/LaundroTrack/components/student-dashboard.tsx)</li>
+<li>[`components/google-map.tsx`](/Users/yashraj/Desktop/LaundroTrack/components/google-map.tsx)</li>
+<li>[`components/orders-tracking-page.tsx`](/Users/yashraj/Desktop/LaundroTrack/components/orders-tracking-page.tsx)</li>
+<li>[`components/order-form.tsx`](/Users/yashraj/Desktop/LaundroTrack/components/order-form.tsx)</li>
+<li>[`components/owner-dashboard.tsx`](/Users/yashraj/Desktop/LaundroTrack/components/owner-dashboard.tsx)</li>
+<li>[`components/login-page-client.tsx`](/Users/yashraj/Desktop/LaundroTrack/components/login-page-client.tsx)</li>
+<li>[`app/auth/signup/page.tsx`](/Users/yashraj/Desktop/LaundroTrack/app/auth/signup/page.tsx)</li>
+<li>[`lib/data.ts`](/Users/yashraj/Desktop/LaundroTrack/lib/data.ts)</li>
+<li>[`lib/ml.ts`](/Users/yashraj/Desktop/LaundroTrack/lib/ml.ts)</li>
+<li>[`lib/auth.ts`](/Users/yashraj/Desktop/LaundroTrack/lib/auth.ts)</li>
+</ul>
+<p>---</p>
+<h2>21. Conclusion</h2>
+<p>LaundroTrack already demonstrates the essential ingredients of a full-stack AI/ML product:</p>
+<ul>
+<li>user-facing discovery</li>
+<li>owner operations</li>
+<li>predictive logic</li>
+<li>role-based auth</li>
+<li>API integration</li>
+<li>map-based UX</li>
+<li>order and status workflow</li>
+</ul>
+<p>It is a solid base for an academic project, MVP, internship demo, or startup prototype. With real persistence and real-time infrastructure added, it can evolve into a production-ready application.</p>
+
+</body>
+</html>

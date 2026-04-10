@@ -1,19 +1,40 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GoogleMap } from "@/components/google-map";
 import Link from "next/link";
+import { getCurrentAccount } from "@/lib/auth";
 import { laundries } from "@/lib/data";
 import { buildAllInsights } from "@/lib/ml";
 import { formatCurrency } from "@/lib/utils";
 
 export function StudentDashboard() {
   const [selectedLaundryId, setSelectedLaundryId] = useState(laundries[1]?.id ?? laundries[0]?.id ?? "");
+  const [studentAccount, setStudentAccount] = useState<{
+    name: string;
+    email: string;
+    hostel: string;
+  }>({
+    name: "Aarav Sharma",
+    email: "student@laundrotrack.in",
+    hostel: "Block C Hostel"
+  });
   const selectedLaundry = useMemo(
     () => laundries.find((entry) => entry.id === selectedLaundryId) ?? laundries[0],
     [selectedLaundryId]
   );
   const insight = buildAllInsights().find((entry) => entry.laundryId === selectedLaundry.id);
+
+  useEffect(() => {
+    const currentAccount = getCurrentAccount();
+    if (currentAccount?.role === "student") {
+      setStudentAccount({
+        name: currentAccount.name,
+        email: currentAccount.email,
+        hostel: currentAccount.hostel
+      });
+    }
+  }, []);
 
   return (
     <div className="page-shell">
@@ -45,15 +66,15 @@ export function StudentDashboard() {
           <div className="profile-grid">
             <div className="span-12 profile-row">
               <span>Name</span>
-              <strong>Aarav Sharma</strong>
+              <strong>{studentAccount.name}</strong>
             </div>
             <div className="span-12 profile-row">
               <span>Email</span>
-              <strong>student@laundrotrack.in</strong>
+              <strong>{studentAccount.email}</strong>
             </div>
             <div className="span-12 profile-row">
               <span>Hostel</span>
-              <strong>Block C Hostel</strong>
+              <strong>{studentAccount.hostel}</strong>
             </div>
             <div className="span-12 profile-row">
               <span>Preferred Laundry</span>
